@@ -1,0 +1,5 @@
+.idea
+node_modules
+Makefile
+.env
+config/production.json
