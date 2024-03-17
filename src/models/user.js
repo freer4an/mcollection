@@ -1,4 +1,4 @@
-import {DataTypes, ValidationError} from 'sequelize'
+import {DataTypes} from 'sequelize'
 import {hashSync} from 'bcrypt'
 import db from '../config/db.js'
 
@@ -49,12 +49,16 @@ export const User = db.define('User', {
         freezeTableName: true
     })
 
-User.beforeCreate((user, options) => {
+User.beforeCreate((user) => {
     user.password = hashSync(user.password, 5)
 })
 
-User.afterFind((user, options) => {
-    delete user.password
+User.afterFind((user) => {
+    if (Array.isArray(user)) {
+        user.forEach(user => {
+            delete user.dataValues.password;
+        });
+    }
 })
 
 User.sync({force: false}).then(() => {

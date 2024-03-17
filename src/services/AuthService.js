@@ -17,10 +17,15 @@ class AuthService {
         if (!email || !password) throw new ApiError(400, "Email or password is empty");
         const user = await User.findOne({where: {email: userData.email}});
         if (!user) throw new ApiError(404, "User not found");
-        if (!compareSync(userData.password, user.password)) {
+        this.validatePassword(userData.password, user.password);
+        delete user.dataValues.password;
+        return user;
+    }
+
+    validatePassword(password, validPassword) {
+        if (!compareSync(password, validPassword)) {
             throw new ApiError(400, "Wrong password");
         }
-        return user
     }
 }
 export default new AuthService()
